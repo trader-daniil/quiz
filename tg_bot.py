@@ -1,54 +1,27 @@
 import os
 from enum import Enum
 from dotenv import load_dotenv
-from telegram import (Update, ForceReply, ReplyKeyboardMarkup,
+from telegram import (Update, ReplyKeyboardMarkup,
                       ReplyKeyboardRemove)
-"""
-from telegram.ext import (Updater, CommandHandler, MessageHandler,
-                          Filters, CallbackContext, ConversationHandler,
-                          RegexHandler, ConversationHandler, filters)
-"""
-from telegram.ext import (
-    Updater,
-
-    CommandHandler,
-
-    ConversationHandler,
-
-    MessageHandler,
-
-    Filters,
-
-)
+from telegram.ext import (Updater, CommandHandler,
+    ConversationHandler, MessageHandler,
+    Filters)
 import redis
 import random
 from functools import partial
+from quiz_questions import load_questions
 
 load_dotenv()
 
-FOLDERPATH_WITH_QUESTIONS = './quiz-questions'
 CUSTOM_KEYBOARD = [['Новый вопрос', 'Сдаться'], 
                    ['Мой счет']]
+FOLDERPATH_WITH_QUESTIONS = './quiz-questions'
 
 
 class QuizStatus(Enum):
     new_question = 0
     answer = 1
 
-
-def load_questions(folderpath):
-    questions = {}
-    for filename in os.listdir(FOLDERPATH_WITH_QUESTIONS)[:2]:
-        with open(f'{FOLDERPATH_WITH_QUESTIONS}/{filename}', 'r', encoding='KOI8-R') as file:
-            question = ''
-            quizes = file.read().split('\n\n')
-            for quiz in quizes:
-                if quiz.startswith('Вопрос'):
-                    question = quiz.split(':\n')[1]
-                elif quiz.startswith('Ответ'):
-                    answer = quiz.split(':\n')[1]
-                    questions[question] = answer
-    return questions
 
 
 def start(update, context):
