@@ -1,18 +1,14 @@
 import random
-
 import vk_api as vk
 from vk_api.longpoll import VkLongPoll, VkEventType
 import os
 from dotenv import load_dotenv
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
-from functools import partial
 import redis
-import random
 from quiz_questions import load_questions
 
 FOLDERPATH_WITH_QUESTIONS = './quiz-questions'
 load_dotenv()
-
 
 
 def give_up(event, vk_api, keyboard, questions, redis_con):
@@ -23,14 +19,14 @@ def give_up(event, vk_api, keyboard, questions, redis_con):
         user_id=event.user_id,
         message=answer,
         keyboard=keyboard.get_keyboard(),
-        random_id=random.randint(1,1000)
+        random_id=random.randint(1, 1000)
     )
     question, answer = random.choice(list(questions.items()))
     vk_api.messages.send(
         user_id=event.user_id,
         message=question,
         keyboard=keyboard.get_keyboard(),
-        random_id=random.randint(1,1000)
+        random_id=random.randint(1, 1000)
     )
     redis_con.set(
         event.user_id,
@@ -48,7 +44,7 @@ def send_question(event, vk_api, keyboard, questions, redis_con):
         user_id=event.user_id,
         message=question,
         keyboard=keyboard.get_keyboard(),
-        random_id=random.randint(1,1000)
+        random_id=random.randint(1, 1000)
     )
 
 
@@ -59,17 +55,17 @@ def check_answer(event, vk_api, keyboard, questions, redis_con):
     if user_answer == answer:
         vk_api.messages.send(
             user_id=event.user_id,
-            message='Правильно\! Поздравляю\! Для '
+            message='Поздравляю\! Для '
                     'следующего вопроса нажми «Новый вопрос»',
             keyboard=keyboard.get_keyboard(),
-            random_id=random.randint(1,1000)
+            random_id=random.randint(1, 1000)
         )
     else:
         vk_api.messages.send(
             user_id=event.user_id,
             message='Неправильно, попробуйте еще раз',
             keyboard=keyboard.get_keyboard(),
-            random_id=random.randint(1,1000)
+            random_id=random.randint(1, 1000)
         )
 
 

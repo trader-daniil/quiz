@@ -5,7 +5,7 @@ FOLDERPATH_WITH_QUESTIONS = './quiz-questions'
 
 def load_questions(folderpath):
     questions = {}
-    for filename in os.listdir(folderpath)[:2]:
+    for filename in os.listdir(folderpath):
         with open(f'{folderpath}/{filename}', 'r', encoding='KOI8-R') as file:
             question = ''
             quizes = file.read().split('\n\n')
