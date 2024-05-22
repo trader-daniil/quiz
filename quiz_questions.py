@@ -1,7 +1,5 @@
 import os
 
-FOLDERPATH_WITH_QUESTIONS = './quiz-questions'
-
 
 def load_questions(folderpath):
     questions = {}
