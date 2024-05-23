@@ -10,12 +10,11 @@ import redis
 import random
 from functools import partial
 from quiz_questions import load_questions
+import argparse
 
-load_dotenv()
 
 CUSTOM_KEYBOARD = [['Новый вопрос', 'Сдаться'],
                    ['Мой счет']]
-FOLDERPATH_WITH_QUESTIONS = './quiz-questions'
 
 
 class QuizStatus(Enum):
@@ -79,13 +78,21 @@ def give_up(update: Update, context, questions, redis_con):
 
 
 def main() -> None:
+    load_dotenv()
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--folderpath', default='./quiz-questions')
+
+    args = parser.parse_args()
+    folderpath_with_questions = args.folderpath
+
     r = redis.Redis(
-        host='localhost',
-        port=6379,
-        db=0,
+        host=os.getenv('DB_HOST'),
+        port=os.getenv('DB_PORT'),
+        db=os.getenv('DB_NUMBER'),
     )
     tg_token = os.getenv('TG_BOT_TOKEN')
-    questions = load_questions(folderpath=FOLDERPATH_WITH_QUESTIONS)
+    questions = load_questions(folderpath=folderpath_with_questions)
     updater = Updater(tg_token)
     dispatcher = updater.dispatcher
 

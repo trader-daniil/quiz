@@ -6,13 +6,10 @@ from dotenv import load_dotenv
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 import redis
 from quiz_questions import load_questions
-
-FOLDERPATH_WITH_QUESTIONS = './quiz-questions'
-load_dotenv()
+import argparse
 
 
 def give_up(event, vk_api, keyboard, questions, redis_con):
-    print('Сдаетесь')
     question = redis_con.get(event.user_id).decode('utf-8')
     answer = questions[question].rstrip('.')
     vk_api.messages.send(
@@ -70,12 +67,19 @@ def check_answer(event, vk_api, keyboard, questions, redis_con):
 
 
 if __name__ == "__main__":
+    load_dotenv()
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--folderpath', default='./quiz-questions')
+
+    args = parser.parse_args()
+    folderpath_with_questions = args.folderpath
     r = redis.Redis(
-        host='localhost',
-        port=6379,
-        db=0,
+        host=os.getenv('DB_HOST'),
+        port=os.getenv('DB_PORT'),
+        db=os.getenv('DB_NUMBER'),
     )
-    questions = load_questions(folderpath=FOLDERPATH_WITH_QUESTIONS)
+    questions = load_questions(folderpath=folderpath_with_questions)
     vk_token = os.getenv('VK_TOKEN')
     vk_session = vk.VkApi(token=vk_token)
     vk_api = vk_session.get_api()
